@@ -15,15 +15,15 @@ Route::get('/', array(
 	'as' => 'home',
 	'uses' => 'MemberController@home'
 ));
-Route::match(array('GET', 'POST'), '/add', array(
+Route::match(array('PUT', 'POST'),'/add', array(
 	'as' => 'home_add',
 	'uses' => 'MemberController@add'
 ));
-Route::match(array('GET', 'POST'),'/edit/{id}', array(
+Route::match(array('PUT', 'POST'),'/edit/{id}', array(
 	'as' => 'home_edit',
 	'uses' => 'MemberController@edit'
 ));
-Route::get('/delete/{id}', array(
+Route::delete('/delete/{id}', array(
 	'as' => 'home_delete',
 	'uses' => 'MemberController@delete'
 ));
