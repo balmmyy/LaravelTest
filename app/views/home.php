@@ -28,11 +28,29 @@ for($i=0; $i<count($member); $i++){
 				echo($member[$i]['memberStatus']);
 			}
 		?></td>
-		<td><a href="<?php echo(URL::action('home_edit', array($member[$i]['_id']))); ?>">EDIT</td>
-		<td><a href="<?php echo(URL::action('home_delete', array($member[$i]['_id']))); ?>">DELETE</td>
+
+		<td><?php
+			echo(Form::open(['route' => ['home_edit', $member[$i]['_id']], 'method' => 'put']) );
+			echo(Form::submit('Edit') );
+			echo(Form::close() );
+		?></td>
+
+		<td><?php
+			echo(Form::open(['route' => ['home_delete', $member[$i]['_id']], 'method' => 'delete']) );
+			echo(Form::submit('Delete') );
+			echo(Form::close() );
+		?></td>
+
+		<!--<td><a href="<?php echo(URL::action('home_edit', array($member[$i]['_id']))); ?>">EDIT</td>-->
+		<!--<td><a href="<?php echo(URL::action('home_delete', array($member[$i]['_id']))); ?>">DELETE</td>-->
 	</tr><?php
 }
 ?>
 </table>
 <br>
-<a href="<?php echo(URL::action('home_add'));?>">ADD NEW MEMBER</a>
+<?php
+echo(Form::open(['route' => ['home_add'], 'method' => 'put']) );
+echo(Form::submit('ADD NEW MEMBER') );
+echo(Form::close() );
+?>
+<!--<a href="<?php echo(URL::action('home_add'));?>">ADD NEW MEMBER</a>-->
