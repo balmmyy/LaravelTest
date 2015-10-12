@@ -11,22 +11,15 @@
 |
 */
 
-Route::get('/', array(
-	'as' => 'home',
-	'uses' => 'MemberController@home'
-));
-Route::match(array('PUT', 'POST'),'/add', array(
-	'as' => 'home_add',
-	'uses' => 'MemberController@add'
-));
-Route::match(array('PUT', 'POST'),'/edit/{id}', array(
-	'as' => 'home_edit',
-	'uses' => 'MemberController@edit'
-));
-Route::delete('/delete/{id}', array(
-	'as' => 'home_delete',
-	'uses' => 'MemberController@delete'
-));
+Route::get('/', 'MemberController@getAll');
+
+Route::get('/{item}', 'MemberController@get');
+
+Route::post('/add', 'MemberController@add');
+
+Route::put('/edit/{item}', 'MemberController@edit');
+
+Route::delete('/delete/{item}','MemberController@delete');
 
 
 /*Route::get('/', function(){
