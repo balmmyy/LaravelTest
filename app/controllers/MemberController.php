@@ -1,89 +1,110 @@
 <?php
 class MemberController extends BaseController {
 	
-	public $form = array(
-		'memberName'   => 'name',
-		'memberAge'    => 'age',
-		'memberStatus' => 'status'
-	);
-	
-	public function home()
+	public function get($item)
 	{
 		$dbs = new DBconnect();
-		
+		$doc = $dbs->find($item);
+
+		if($doc) {
+			return Response::json($doc);
+		}else{
+			$doc = $dbs->where('memberName',$item);
+			if(isset($doc->get()[0])){
+				return Response::json($doc->get());
+			}else{
+				return Response::json(array('message'=>'not found'));
+			}
+		}
+	}
+
+	public function getAll()
+	{
+		$dbs = new DBconnect();
 		$rd = DB::collection($dbs->getTable())->get();
-		
-		return View::make('home', array(
-			'member' => $rd
-		));
+		return Response::json($rd);
 	}
 	
 	public function add()
 	{
-		if (Request::isMethod('post')){
-			$post = Input::get();
-			//remove csrf token
-			if(array_key_exists('_token', $post)){
-				unset($post['_token']);
-			}
-			$dbs = new DBconnect();
-			$dbs->insert($post);
 
-			return Redirect::route('home');
-		}else{
-			//go to form page
-			return View::make('form', array(
-				'heading' => 'Add New Member',
-				'form' => $this->form
-			));
+		$post = Input::get();
+		//remove csrf token
+		if(array_key_exists('_token', $post)){
+			unset($post['_token']);
 		}
+		$dbs = new DBconnect();
+		if($dbs->insert($post)){
+			return Response::json(array('message'=>'success'));
+		}else{
+			return Response::json(array('message'=>'error'));
+		}
+
+
 
 	}
 	
-	public function edit($id)
+	public function edit($item)
 	{
 		$dbs = new DBconnect();
-		$doc = $dbs->find($id);
+		$doc = $dbs->find($item);
 
-		if (Request::isMethod('post')){
-			$post = Input::get();
+		$post = Input::get();
 
-			//remove csrf token
-			if(array_key_exists('_token', $post)){
-				unset($post['_token']);
-			}
-			
-			Eloquent::unguard();
-			$doc->update($post);
-
-			return Redirect::route('home');
-		}else{
-			//go to form page
-			return View::make('form', array(
-				'heading' => 'Edit Member',
-				'form' => $this->setData($this->form, $doc->getAttributes())
-			));
+		//remove csrf token
+		if(array_key_exists('_token', $post)){
+			unset($post['_token']);
 		}
+
+		Eloquent::unguard();
+
+		if($doc) {
+			if($doc->update($post)){
+				return Response::json(array('message'=>'success'));
+			}else{
+				return Response::json(array('message'=>'error'));
+			}
+		}else{
+			$doc = $dbs->where('memberName',$item);
+			if(isset($doc->get()[0])){
+				if($doc->update($post)){
+					return Response::json(array('message'=>'success'));
+				}else{
+					return Response::json(array('message'=>'error'));
+				}
+			}else{
+				return Response::json(array('message'=>'not found'));
+			}
+		}
+
 
 	}
 	
-	public function delete($id)
+	public function delete($item)
 	{
 		$dbs = new DBconnect();
-		$doc = $dbs->find($id);
-		if($doc){
-			$doc->delete();
-		}
-		return Redirect::route('home');
-	}
-	
-	public function setData($form, $data)
-	{
+		$doc = $dbs->find($item);
 
-		$form['nameValue'] = $data['memberName'];
-		$form['ageValue'] = $data['memberAge'];
-		$form['statusValue'] = $data['memberStatus'];
-		
-		return $form;
+		if($doc) {
+			if($doc->delete()){
+				return Response::json(array('message'=>'success'));
+			}else{
+				return Response::json(array('message'=>'error'));
+			}
+		}else{
+			$doc = $dbs->where('memberName',$item);
+			if(isset($doc->get()[0])){
+				if($doc->delete()){
+					return Response::json(array('message'=>'success'));
+				}else{
+					return Response::json(array('message'=>'error'));
+				}
+			}else{
+				return Response::json(array('message'=>'not found'));
+			}
+		}
+
+
 	}
+
 }
